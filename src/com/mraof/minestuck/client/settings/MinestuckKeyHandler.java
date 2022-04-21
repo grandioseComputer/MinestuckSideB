@@ -29,6 +29,7 @@ public class MinestuckKeyHandler
 	public KeyBinding captchaKey;
 	public KeyBinding effectToggleKey;
 	public KeyBinding sylladexKey;
+	public KeyBinding spawnDungeon;
 	boolean captchaKeyPressed = false;
 	
 	public void registerKeys()
@@ -46,6 +47,8 @@ public class MinestuckKeyHandler
 		ClientRegistry.registerKeyBinding(effectToggleKey);
 		sylladexKey = new KeyBinding("key.sylladex", Keyboard.KEY_NONE, "key.categories.minestuck");
 		ClientRegistry.registerKeyBinding(sylladexKey);
+		spawnDungeon = new KeyBinding("key.spawnDungeon", Keyboard.KEY_NONE, "key.categories.minestuck");
+		ClientRegistry.registerKeyBinding(spawnDungeon);
 	}
 	
 	@SubscribeEvent
@@ -76,6 +79,11 @@ public class MinestuckKeyHandler
 		{
 			if(CaptchaDeckHandler.clientSideModus != null)
 				Minecraft.getMinecraft().displayGuiScreen(CaptchaDeckHandler.clientSideModus.getGuiHandler());
+		}
+		
+		while(spawnDungeon.isPressed())
+		{
+			MinestuckChannelHandler.sendToServer(MinestuckPacket.makePacket(Type.MEDIUM_DUNGEON));
 		}
 	}
 	

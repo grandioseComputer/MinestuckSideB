@@ -32,6 +32,7 @@ public abstract class MinestuckPacket
 		SELECTION(SelectionPacket.class),
 		DATA_CHECKER(DataCheckerPacket.class),
 		EFFECT_TOGGLE(EffectTogglePacket.class),
+		MEDIUM_DUNGEON(TestMediumDungeonPacket.class),
 		;
 		
 		Class<? extends MinestuckPacket> packetType;

@@ -1,5 +1,6 @@
 package com.mraof.minestuck;
 
+
 import com.mraof.minestuck.alchemy.AlchemyRecipes;
 import com.mraof.minestuck.client.ClientProxy;
 import com.mraof.minestuck.command.*;
@@ -12,6 +13,8 @@ import com.mraof.minestuck.tileentity.*;
 import com.mraof.minestuck.tracker.MinestuckPlayerTracker;
 import com.mraof.minestuck.util.*;
 import com.mraof.minestuck.world.MinestuckDimensionHandler;
+import com.mraof.minestuck.world.lands.structure.MediumDungeon;
+
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -124,6 +127,7 @@ public class Minestuck
 		event.registerServerCommand(new CommandToStructure());
 		event.registerServerCommand(new CommandPorkhollow());
 		event.registerServerCommand(new CommandLandDebug());
+		MediumDungeon.setUpRoomsAtServerStart();
 		
 		worldSeed = event.getServer().worlds[0].getSeed();
 		ServerEventHandler.lastDay = event.getServer().worlds[0].getWorldTime() / 24000L;
