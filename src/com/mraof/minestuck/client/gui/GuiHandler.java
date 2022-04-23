@@ -30,6 +30,7 @@ public class GuiHandler implements IGuiHandler
 		COLOR,
 		MERCHANT,
 		ALCHEMITER,
+		TEST
 	}
 	
 	@Override
@@ -74,6 +75,9 @@ public class GuiHandler implements IGuiHandler
 		
 		if(id == GuiId.MERCHANT.ordinal())
 			return new GuiConsortShop(player);
+		
+		if(id == GuiId.TEST.ordinal())
+			return new GuiDialogue();
 		
 		if(tileEntity instanceof TileEntityAlchemiter && id == GuiId.ALCHEMITER.ordinal())
 			return new GuiAlchemiter((TileEntityAlchemiter) tileEntity);

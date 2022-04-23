@@ -6,6 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -14,6 +16,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 //Needed for getting key-input inside containers.
 import org.lwjgl.input.Keyboard;
 
+import com.mraof.minestuck.client.gui.GuiDialogue;
+import com.mraof.minestuck.client.gui.playerStats.GuiDataChecker;
 import com.mraof.minestuck.client.gui.playerStats.GuiPlayerStats;
 import com.mraof.minestuck.editmode.ClientEditHandler;
 import com.mraof.minestuck.network.CaptchaDeckPacket;
@@ -83,7 +87,8 @@ public class MinestuckKeyHandler
 		
 		while(spawnDungeon.isPressed())
 		{
-			MinestuckChannelHandler.sendToServer(MinestuckPacket.makePacket(Type.MEDIUM_DUNGEON));
+			Minecraft.getMinecraft().displayGuiScreen(new GuiDialogue());
+			//MinestuckChannelHandler.sendToServer(MinestuckPacket.makePacket(Type.MEDIUM_DUNGEON));
 		}
 	}
 	
@@ -92,6 +97,8 @@ public class MinestuckKeyHandler
 	{
 		try
 		{
+			//keyboard.iskeydown(keybind.getkeycode()) allows for button pressing in guis
+			//key.getKeybind().isKeyDown() is only outside of guis
 			if(Keyboard.isKeyDown(captchaKey.getKeyCode()) && !captchaKeyPressed)
 			{
 				

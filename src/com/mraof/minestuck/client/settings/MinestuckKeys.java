@@ -3,6 +3,7 @@ package com.mraof.minestuck.client.settings;
 import org.lwjgl.input.Keyboard;
 
 import com.mraof.minestuck.client.gui.playerStats.GuiPlayerStats;
+import com.mraof.minestuck.inventory.captchalouge.CaptchaDeckHandler;
 import com.mraof.minestuck.network.CaptchaDeckPacket;
 import com.mraof.minestuck.network.MinestuckChannelHandler;
 import com.mraof.minestuck.network.MinestuckPacket;
@@ -22,10 +23,11 @@ public enum MinestuckKeys
 	{
 		public void execute(EntityPlayer player)
 		{
-			
+			if(player.world.isRemote)
+				MinestuckChannelHandler.sendToServer(MinestuckPacket.makePacket(Type.MEDIUM_DUNGEON));
         }
 	},
-	STATS("test", Keyboard.KEY_U, 0, false)
+	STATS("statsGui", Keyboard.KEY_U, 0, false)
 	{
 		public void execute(EntityPlayer player)
 		{
@@ -33,7 +35,7 @@ public enum MinestuckKeys
 				GuiPlayerStats.openGui(false);
         }
 	},
-	EDIT("test", Keyboard.KEY_U, 0, false)
+	EDIT("exitEdit", Keyboard.KEY_U, 0, false)
 	{
 		public void execute(EntityPlayer player)
 		{
@@ -41,7 +43,7 @@ public enum MinestuckKeys
 				MinestuckChannelHandler.sendToServer(MinestuckPacket.makePacket(Type.CLIENT_EDIT));;
         }
 	},
-	CAPTCHA("test", Keyboard.KEY_U, 0, false)
+	CAPTCHA("catchalouge", Keyboard.KEY_U, 0, false)
 	{
 		public void execute(EntityPlayer player)
 		{
@@ -54,18 +56,21 @@ public enum MinestuckKeys
 			}
         }
 	},
-	EFFECT("test", Keyboard.KEY_U, 0, false)
+	EFFECT("aspectEffectToggle", Keyboard.KEY_U, 0, false)
 	{
 		public void execute(EntityPlayer player)
 		{
-			
+			if(player.world.isRemote)
+				MinestuckChannelHandler.sendToServer(MinestuckPacket.makePacket(Type.EFFECT_TOGGLE));
+
         }
 	},
-	SYLLADEX("test", Keyboard.KEY_U, 0, false)
+	SYLLADEX("sylladex", Keyboard.KEY_U, 0, false)
 	{
 		public void execute(EntityPlayer player)
 		{
-			
+			if(player.world.isRemote && CaptchaDeckHandler.clientSideModus != null)
+				Minecraft.getMinecraft().displayGuiScreen(CaptchaDeckHandler.clientSideModus.getGuiHandler());
         }
 	}
 	;
