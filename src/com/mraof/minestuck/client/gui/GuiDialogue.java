@@ -6,8 +6,8 @@ import net.minecraft.util.ResourceLocation;
 
 public class GuiDialogue extends GuiScreen
 {
-	private ResourceLocation guiBackground = new ResourceLocation("minestuck", "textures/gui/dialougetest.png");
-	private int xSize = 240, ySize = 216;
+	private ResourceLocation guiBackground = new ResourceLocation("minestuck", "textures/gui/dialoguetest.png");
+	private int xSize = 256, ySize = 202;
 	
 	public GuiDialogue ()
 	{

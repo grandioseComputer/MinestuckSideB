@@ -2,7 +2,9 @@ package com.mraof.minestuck.entity.consort;
 
 import java.util.Iterator;
 
+import com.mraof.minestuck.Minestuck;
 import com.mraof.minestuck.advancements.MinestuckCriteriaTriggers;
+import com.mraof.minestuck.client.gui.GuiHandler;
 import com.mraof.minestuck.entity.EntityMinestuck;
 import com.mraof.minestuck.entity.consort.MessageType.SingleMessage;
 import com.mraof.minestuck.inventory.InventoryConsortMerchant;
@@ -72,6 +74,8 @@ public abstract class EntityConsort extends EntityMinestuck
 	{
 		if(this.isEntityAlive() && !player.isSneaking() && eventTimer < 0)
 		{
+			player.openGui(Minestuck.instance, GuiHandler.GuiId.TEST.ordinal(), player.world, (int) this.posX, (int) this.posY, (int) this.posZ);
+			/*
 			if(!world.isRemote)
 			{
 				if(message == null)
@@ -81,13 +85,14 @@ public abstract class EntityConsort extends EntityMinestuck
 					messageData = new NBTTagCompound();
 				}
 				ITextComponent text = message.getMessage(this, player);	//TODO Make sure to catch any issues here
+				/*
 				if (text != null)
 				{
 					player.sendMessage(text);
 					onSendMessage(player, text, this);
 				}
 				MinestuckCriteriaTriggers.CONSORT_TALK.trigger((EntityPlayerMP) player, message.getString(), this);
-			}
+			}*/
 			
 			return true;
 		} else
