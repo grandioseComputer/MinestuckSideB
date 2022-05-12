@@ -34,6 +34,26 @@ public class Compute
 		return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
 	}
 	
+	public static boolean isWithin2D(int isInX, int isInY, int x1, int y1, int x2, int y2)
+	{
+		int maxX = x1;
+		int maxY = y1;
+		int minX = x2;
+		int minY = y2;
+		if(x1 < x2)
+		{
+			maxX = x2;
+			minX = x1;
+		}
+		if(y1 < y2)
+		{
+			maxY = y2;
+			minY = y1;
+		}
+		
+		return isInX >= minX && isInX <= maxX && isInY >= minY && isInY <= maxY;
+	}
+	
 	/*TODO: bring this stuff back when you start fraymotifs
 	public static boolean isAlly(EntityLivingBase entity, BasicSpell spell)
 	{
