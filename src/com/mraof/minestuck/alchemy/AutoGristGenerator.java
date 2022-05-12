@@ -5,6 +5,7 @@ import com.mraof.minestuck.util.Debug;
 import net.minecraft.client.util.RecipeItemHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 
@@ -72,7 +73,29 @@ public class AutoGristGenerator
 			}
 		}
 		
-		Debug.info("Added "+returned+" grist conversions.");
+		int smeltReturn = 0;
+		for(ItemStack input : FurnaceRecipes.instance().getSmeltingList().keySet())
+		{
+			ItemStack output = FurnaceRecipes.instance().getSmeltingList().get(input);
+			if(output.isEmpty())
+				continue;
+			if(GristRegistry.getGristConversion(output) != null)
+				continue;
+			GristSet set = new GristSet(GristType.Tar, 1);
+			
+			GristSet inputCost = findCostForItem(input, true);
+			
+			if(inputCost == null)
+				continue;
+			
+			set.addGrist(inputCost);
+			
+			set.scaleGrist(1/ (float) output.getCount());
+			GristRegistry.addGristConversion(output, output.getHasSubtypes(), set);
+			smeltReturn++;
+		}
+		
+		Debug.info("Added "+returned+" grist conversions from recipes and " + smeltReturn + " from smelting.");
 	}
 	
 	public GristSet lookupCostForItem(ItemStack item)

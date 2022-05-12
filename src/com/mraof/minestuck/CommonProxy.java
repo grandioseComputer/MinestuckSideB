@@ -9,6 +9,7 @@ import com.mraof.minestuck.editmode.ServerEditHandler;
 import com.mraof.minestuck.entity.MinestuckEntities;
 import com.mraof.minestuck.entity.consort.ConsortDialogue;
 import com.mraof.minestuck.entity.consort.ConsortRewardHandler;
+import com.mraof.minestuck.entity.dialogue.Dialogue;
 import com.mraof.minestuck.event.MinestuckFluidHandler;
 import com.mraof.minestuck.event.ServerEventHandler;
 import com.mraof.minestuck.item.ItemMinestuckCandy;
@@ -124,6 +125,7 @@ public class CommonProxy
 		
 		LandAspectRegistry.registerLandAspects();
 		ConsortDialogue.init();
+		Dialogue.init();
 		
 		KindAbstratusList.registerTypes();
 		DeployList.registerItems();
