@@ -143,7 +143,7 @@ public abstract class MessageType
 		if(consortPrefix)
 		{
 			message.getStyle().setColor(consort.getConsortType().getColor());
-			TextComponentTranslation entity = new TextComponentTranslation("entity." + s + ".name");
+			TextComponentBase entity = new TextComponentString(consort.getName());
 			
 			return new TextComponentTranslation("chat.type.text", entity, message);
 		} else

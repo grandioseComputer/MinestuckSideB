@@ -1,15 +1,21 @@
 package com.mraof.minestuck.entity.consort;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.mraof.minestuck.Minestuck;
 import com.mraof.minestuck.advancements.MinestuckCriteriaTriggers;
+import com.mraof.minestuck.client.gui.GuiDialogue;
 import com.mraof.minestuck.client.gui.GuiHandler;
 import com.mraof.minestuck.entity.EntityMinestuck;
 import com.mraof.minestuck.entity.consort.MessageType.SingleMessage;
+import com.mraof.minestuck.entity.dialogue.DialogueType;
+import com.mraof.minestuck.entity.dialogue.IDialoguer;
 import com.mraof.minestuck.inventory.InventoryConsortMerchant;
 import com.mraof.minestuck.util.Debug;
 import com.mraof.minestuck.world.MinestuckDimensionHandler;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.ai.*;
@@ -20,12 +26,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 
-public abstract class EntityConsort extends EntityMinestuck
+public abstract class EntityConsort extends EntityMinestuck implements IDialoguer
 {
 	
 	ConsortDialogue.DialogueWrapper message;
@@ -74,7 +81,10 @@ public abstract class EntityConsort extends EntityMinestuck
 	{
 		if(this.isEntityAlive() && !player.isSneaking() && eventTimer < 0)
 		{
-			player.openGui(Minestuck.instance, GuiHandler.GuiId.TEST.ordinal(), player.world, (int) this.posX, (int) this.posY, (int) this.posZ);
+			//player.openGui(Minestuck.instance, GuiHandler.GuiId.TEST.ordinal(), player.world, (int) this.posX, (int) this.posY, (int) this.posZ);
+			if(player.world.isRemote)
+				Minecraft.getMinecraft().displayGuiScreen(new GuiDialogue(this));
+			player.sendMessage(new TextComponentString(player.world.isRemote + "")); 
 			/*
 			if(!world.isRemote)
 			{
@@ -85,15 +95,15 @@ public abstract class EntityConsort extends EntityMinestuck
 					messageData = new NBTTagCompound();
 				}
 				ITextComponent text = message.getMessage(this, player);	//TODO Make sure to catch any issues here
-				/*
+				
 				if (text != null)
 				{
 					player.sendMessage(text);
 					onSendMessage(player, text, this);
 				}
 				MinestuckCriteriaTriggers.CONSORT_TALK.trigger((EntityPlayerMP) player, message.getString(), this);
-			}*/
-			
+			}
+			*/
 			return true;
 		} else
 			return super.processInteract(player, hand);
@@ -314,5 +324,11 @@ public abstract class EntityConsort extends EntityMinestuck
 		if(!messageData.hasKey(player.getCachedUniqueIdString(), 10))
 			messageData.setTag(player.getCachedUniqueIdString(), new NBTTagCompound());
 		return messageData.getCompoundTag(player.getCachedUniqueIdString());
+	}
+	
+	@Override
+	public ArrayList<String> getDialogue() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -1,9 +1,12 @@
 package com.mraof.minestuck.entity.consort;
 
+import com.mraof.minestuck.entity.dialogue.DialogueType;
 import com.mraof.minestuck.util.MinestuckSoundHandler;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
 
 import javax.annotation.Nullable;
 
