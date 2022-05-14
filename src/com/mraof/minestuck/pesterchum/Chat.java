@@ -2,7 +2,7 @@ package com.mraof.minestuck.pesterchum;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+//does the pesterchum package even do anything? Further testing is required
 public class Chat
 {
 	public ArrayList<String> messages = new ArrayList<String>();
