@@ -67,7 +67,6 @@ public abstract class DialogueType
 		
 	public static class BasicDialogue extends DialogueType
 	{
-		
 		protected String unlocalizedMessage;
 		protected String[] args;
 		
@@ -99,4 +98,16 @@ public abstract class DialogueType
 		}
 	}
 	
+	public static class ExitDialogue extends BasicDialogue
+	{
+		public ExitDialogue(String message, String[] args) {
+			super(message, args);
+		}
+	}
+	public static class BackDialogue extends BasicDialogue
+	{
+		public BackDialogue(String message, String[] args) {
+			super(message, args);
+		}
+	}
 }

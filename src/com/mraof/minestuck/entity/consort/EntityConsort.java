@@ -9,6 +9,7 @@ import com.mraof.minestuck.client.gui.GuiDialogue;
 import com.mraof.minestuck.client.gui.GuiHandler;
 import com.mraof.minestuck.entity.EntityMinestuck;
 import com.mraof.minestuck.entity.consort.MessageType.SingleMessage;
+import com.mraof.minestuck.entity.dialogue.Dialogue;
 import com.mraof.minestuck.entity.dialogue.DialogueType;
 import com.mraof.minestuck.entity.dialogue.IDialoguer;
 import com.mraof.minestuck.inventory.InventoryConsortMerchant;
@@ -47,6 +48,8 @@ public abstract class EntityConsort extends EntityMinestuck implements IDialogue
 	private float explosionRadius = 2.0f;
 	static private SingleMessage explosionMessage = new SingleMessage("immortalityHerb.3");
 	
+	ArrayList<String> dialogue;
+	
 	public EntityConsort(World world)
 	{
 		super(world);
@@ -81,10 +84,16 @@ public abstract class EntityConsort extends EntityMinestuck implements IDialogue
 	{
 		if(this.isEntityAlive() && !player.isSneaking() && eventTimer < 0)
 		{
-			//player.openGui(Minestuck.instance, GuiHandler.GuiId.TEST.ordinal(), player.world, (int) this.posX, (int) this.posY, (int) this.posZ);
+			if(!player.world.isRemote)
+			{
+				if(dialogue == null || dialogue.size() <= 0)
+					dialogue = Dialogue.getRandomDialogues(this, player, world.rand.nextInt(5));
+				
+			}
 			if(player.world.isRemote)
+			{
 				Minecraft.getMinecraft().displayGuiScreen(new GuiDialogue(this));
-			player.sendMessage(new TextComponentString(player.world.isRemote + "")); 
+			}
 			/*
 			if(!world.isRemote)
 			{
@@ -328,7 +337,11 @@ public abstract class EntityConsort extends EntityMinestuck implements IDialogue
 	
 	@Override
 	public ArrayList<String> getDialogue() {
-		// TODO Auto-generated method stub
-		return null;
+		return dialogue;
+	}
+	
+	@Override
+	public int getHomeDimension() {
+		return homeDimension;
 	}
 }

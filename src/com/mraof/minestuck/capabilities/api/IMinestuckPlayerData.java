@@ -6,4 +6,8 @@ public interface IMinestuckPlayerData
 extends MinestuckICapabilityBase<EntityPlayer>
 {
 
+	int[] getTalkerKnowledge();
+
+	void setTalkerKnowledge(int[] knowledge);
+
 }

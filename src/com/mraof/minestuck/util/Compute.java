@@ -54,6 +54,38 @@ public class Compute
 		return isInX >= minX && isInX <= maxX && isInY >= minY && isInY <= maxY;
 	}
 	
+	public static ArrayList<String> splitMessage(String message, int pixelsPerLine)
+	{
+		int lettersPerLine = pixelsPerLine / 6;
+		ArrayList<String> split = new ArrayList<>();
+		if(lettersPerLine == 0) return split;
+		
+		while(message != null && !message.contentEquals(""))
+		{
+			//Debug.info(message + ", " + message.length());
+			String part = "";
+			while(part.length() < lettersPerLine - 1 && !message.contentEquals(""))
+			{
+				//TODO: can re-arrange to make faster
+				int wordEnd = message.indexOf(" ") == -1 ? message.length() : message.indexOf(" ");
+				String word = message.substring(0, wordEnd);
+				if(word.length() > lettersPerLine)
+				{
+					wordEnd = lettersPerLine - 1;
+					word = message.substring(0, wordEnd) + "-";
+				}
+				if(part.length() + word.length() > lettersPerLine)
+					break;
+				part += " " + word;
+				message = message.substring(wordEnd == message.length() ? wordEnd : wordEnd + 1);
+			}
+			if(part.length() >= 1 && part.substring(0, 1).contentEquals(" "))
+				part = part.substring(1);
+			split.add(part);
+		}
+		return split;
+	}
+	
 	/*TODO: bring this stuff back when you start fraymotifs
 	public static boolean isAlly(EntityLivingBase entity, BasicSpell spell)
 	{

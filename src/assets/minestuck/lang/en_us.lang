@@ -119,7 +119,7 @@ consort.reckoning3=Like any reasonable %s believes in that!
 consort.lightningStrike=You don't want to be struck by lightning. No one does.
 consort.thunderDeath.1=We're lucky to have rain with this weather.
 consort.thunderDeath.2=Otherwise the thunder would surely have been our death.
-consort.hardcore=This land is HARDCORE! There's lava and lightning wherever you go! Theres also magma n shit and blah blah blah.
+consort.hardcore=This land is HARDCORE! There's lava and lightning wherever you go! Theres also magma n shit and blah blah blah blah blah blah blah blah blah blah blah blah.
 consort.thunderThrow.1=Nemesis has been throwing thunder for generations, not stopping for even a moment.
 consort.thunderThrow.2=They are even doing it in their sleep. Can you believe that?
 
@@ -605,9 +605,13 @@ dialogue.talker.backup=NakNakNak
 dialogue.player.backup=null
 dialogue.console.backup==>
 
-dialogue.talker.notAvailable=I don't have any dialogue right now...
+dialogue.talker.notAvailable=I don't have any dialogue right now............................................................................................................................................................................................................................................................
 dialogue.player.notAvailable=Hello...?
-dialogue.player.notAvailable=Query
+dialogue.console.notAvailable=Queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+
+dialogue.talker.generalStarter=Hello there! What do you want to talk about?
+dialogue.player.generalStarter=Hello
+dialogue.console.generalStarter=Greet
 
 #Denizen Names
 denizen.blood.name=Jormungandr

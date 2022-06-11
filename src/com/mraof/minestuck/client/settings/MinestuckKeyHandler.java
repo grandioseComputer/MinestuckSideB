@@ -87,8 +87,8 @@ public class MinestuckKeyHandler
 		
 		while(spawnDungeon.isPressed())
 		{
-			Minecraft.getMinecraft().displayGuiScreen(new GuiDialogue());
-			//MinestuckChannelHandler.sendToServer(MinestuckPacket.makePacket(Type.MEDIUM_DUNGEON));
+			//Minecraft.getMinecraft().displayGuiScreen(new GuiDialogue());
+			MinestuckChannelHandler.sendToServer(MinestuckPacket.makePacket(Type.MEDIUM_DUNGEON));
 		}
 	}
 	

@@ -14,21 +14,21 @@ import com.mraof.minestuck.entity.consort.EnumConsort;
 import com.mraof.minestuck.entity.dialogue.DialogueType.BasicDialogue;
 import com.mraof.minestuck.entity.dialogue.IDialoguer.EnumDialoguer;
 import com.mraof.minestuck.util.Debug;
-import com.mraof.minestuck.entity.consort.ConsortDialogue.ConsortRequirement;
-import com.mraof.minestuck.entity.consort.ConsortDialogue.DialogueWrapper;
 import com.mraof.minestuck.entity.consort.EnumConsort.MerchantType;
+import com.mraof.minestuck.world.MinestuckDimensionHandler;
 import com.mraof.minestuck.world.lands.LandAspectRegistry;
 import com.mraof.minestuck.world.lands.terrain.TerrainLandAspect;
 import com.mraof.minestuck.world.lands.title.TitleLandAspect;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.text.ITextComponent;
 
 public class Dialogue 
 {
-
 	private static final Hashtable<String, DialogueContainer> dialogue = new Hashtable<>();
+	private static int idCounter = 0;
 	
 	public static void init()
 	{
@@ -64,9 +64,59 @@ public class Dialogue
 		return set.toArray(new TitleLandAspect[set.size()]);
 	}
 	
-	public static DialogueContainer getMessageFromString(String name)
+	public static DialogueContainer getDialogueFromString(String name)
 	{
 		return dialogue.get(name);
+	}
+	
+	public static DialogueContainer getDialogueFromId(int id)
+	{
+		return dialogue.get(dialogue.keySet().toArray()[id]);
+	}
+	
+	public static String getRandomDialogue(IDialoguer talker, EntityPlayer player, String...except)
+	{
+		LandAspectRegistry.AspectCombination aspects = MinestuckDimensionHandler.getAspects(talker.getHomeDimension());
+		
+		List<DialogueContainer> list = new ArrayList<>();
+		
+		for(String key : dialogue.keySet())
+		{
+			DialogueContainer message = dialogue.get(key);
+			boolean alreadyGotten = false;
+			for(String exception : except)
+				if(key.contentEquals(exception))
+					alreadyGotten = true;
+			if(alreadyGotten)
+				continue;
+			if(message.reqLand && aspects == null)
+				continue;
+			if(message.dialoguerRequirement != null && !message.dialoguerRequirement.contains(EnumDialoguer.getType((Entity) talker)))
+				continue;
+			if(message.terrainTypeRequirement != null && !message.terrainTypeRequirement.contains(aspects.aspectTerrain.getPrimaryVariant()))
+				continue;
+			if(message.aspectTypeRequirement != null && !message.aspectTypeRequirement.contains(aspects.aspectTitle.getPrimaryVariant()))
+				continue;
+			if(message.terrainRequirement != null && !message.terrainRequirement.contains(aspects.aspectTerrain))
+				continue;
+			if(message.aspectRequirement != null && !message.aspectRequirement.contains(aspects.aspectTitle))
+				continue;
+			//if(message.merchantRequirement == null && consort.merchantType != EnumConsort.MerchantType.NONE
+			//		|| message.merchantRequirement != null && !message.merchantRequirement.contains(consort.merchantType))
+				//continue;
+			if(message.additionalRequirement != null && !message.additionalRequirement.apply(talker))
+				continue;
+			list.add(message);
+		}
+		return WeightedRandom.getRandomItem(((Entity)talker).world.rand, list).getString();
+	}
+	
+	public static ArrayList<String> getRandomDialogues(IDialoguer talker, EntityPlayer player, int amount)
+	{
+		ArrayList<String> dialogues = new ArrayList<>();
+		for(int i = 0; i < amount; i++)
+			dialogues.add(getRandomDialogue(talker, player, (String[]) dialogues.toArray()));
+		return dialogues;
 	}
 	
 	public static class DialogueContainer extends WeightedRandom.Item
@@ -80,10 +130,12 @@ public class Dialogue
 		public DialogueContainer(int itemWeightIn) 
 		{
 			super(itemWeightIn);
+			dialogueId = idCounter++;
 		}
 		
 		private DialogueType dialogue;
 		private ArrayList<String> leadingDialogues;
+		private int dialogueId;
 		
 		private boolean reqLand;
 		
@@ -91,7 +143,7 @@ public class Dialogue
 		private Set<TitleLandAspect> aspectTypeRequirement;
 		private Set<TerrainLandAspect> terrainRequirement;
 		private Set<TitleLandAspect> aspectRequirement;
-		private EnumSet<EnumDialoguer> consortRequirement;
+		private EnumSet<EnumDialoguer> dialoguerRequirement;
 		private EnumSet<MerchantType> merchantRequirement;
 		private AuxRequirement additionalRequirement;
 		
@@ -155,7 +207,7 @@ public class Dialogue
 		
 		public DialogueContainer talkers(EnumDialoguer... types)
 		{
-			consortRequirement = EnumSet.of(types[0], types);
+			dialoguerRequirement = EnumSet.of(types[0], types);
 			return this;
 		}
 		
@@ -178,6 +230,11 @@ public class Dialogue
 			return this;
 		}
 		
+		public ArrayList<String> getOptions()
+		{
+			return leadingDialogues;
+		}
+		
 		public ITextComponent getTalkerMessage(IDialoguer talker, EntityPlayer player)
 		{
 			return dialogue.getTalkerMessage(talker, player);
@@ -196,6 +253,16 @@ public class Dialogue
 		public String getString()
 		{
 			return dialogue.getString();
+		}
+		
+		public DialogueType getDialogue()
+		{
+			return dialogue;
+		}
+		
+		public int getDialogueId()
+		{
+			return dialogueId;
 		}
 	}
 	

@@ -15,6 +15,8 @@ public interface IDialoguer
 {
 	
 	public ArrayList<String> getDialogue();
+	
+	public int getHomeDimension();
 
 	public enum EnumDialoguer
 	{
