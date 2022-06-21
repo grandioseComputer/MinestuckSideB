@@ -13,6 +13,9 @@ import com.mraof.minestuck.entity.dialogue.Dialogue;
 import com.mraof.minestuck.entity.dialogue.DialogueType;
 import com.mraof.minestuck.entity.dialogue.IDialoguer;
 import com.mraof.minestuck.inventory.InventoryConsortMerchant;
+import com.mraof.minestuck.network.CaptchaDeckPacket;
+import com.mraof.minestuck.network.MinestuckChannelHandler;
+import com.mraof.minestuck.network.MinestuckPacket;
 import com.mraof.minestuck.util.Debug;
 import com.mraof.minestuck.world.MinestuckDimensionHandler;
 
@@ -48,7 +51,7 @@ public abstract class EntityConsort extends EntityMinestuck implements IDialogue
 	private float explosionRadius = 2.0f;
 	static private SingleMessage explosionMessage = new SingleMessage("immortalityHerb.3");
 	
-	ArrayList<String> dialogue;
+	ArrayList<Integer> dialogue;
 	
 	public EntityConsort(World world)
 	{
@@ -87,8 +90,11 @@ public abstract class EntityConsort extends EntityMinestuck implements IDialogue
 			if(!player.world.isRemote)
 			{
 				if(dialogue == null || dialogue.size() <= 0)
-					dialogue = Dialogue.getRandomDialogues(this, player, world.rand.nextInt(5));
-				
+				{
+					dialogue = Dialogue.getRandomDialogues(this, player, 1, "bleh");
+				}
+				MinestuckChannelHandler.sendToPlayer(MinestuckPacket.makePacket(MinestuckPacket.Type.KNOWLEDGE, dialogue), player);
+
 			}
 			if(player.world.isRemote)
 			{
@@ -336,7 +342,7 @@ public abstract class EntityConsort extends EntityMinestuck implements IDialogue
 	}
 	
 	@Override
-	public ArrayList<String> getDialogue() {
+	public ArrayList<Integer> getDialogue() {
 		return dialogue;
 	}
 	

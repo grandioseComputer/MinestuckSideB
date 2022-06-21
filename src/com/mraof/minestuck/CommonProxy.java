@@ -3,6 +3,7 @@ package com.mraof.minestuck;
 import com.mraof.minestuck.advancements.MinestuckCriteriaTriggers;
 import com.mraof.minestuck.alchemy.AlchemyRecipes;
 import com.mraof.minestuck.block.MinestuckBlocks;
+import com.mraof.minestuck.capabilities.MinestuckCapabilities;
 import com.mraof.minestuck.client.gui.GuiHandler;
 import com.mraof.minestuck.editmode.DeployList;
 import com.mraof.minestuck.editmode.ServerEditHandler;
@@ -50,6 +51,8 @@ public class CommonProxy
 		MinecraftForge.EVENT_BUS.register(MinestuckBlocks.class);
 		MinecraftForge.EVENT_BUS.register(MinestuckItems.class);
 		MinecraftForge.EVENT_BUS.register(BiomeMinestuck.class);
+
+		MinestuckCapabilities.registerCapabilities();
 		
 		MinestuckSoundHandler.initSound();
 		

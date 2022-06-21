@@ -31,8 +31,8 @@ public class MinestuckCapabilities
         if (event.getObject() instanceof EntityLivingBase) {
             //event.addCapability(new ResourceLocation("FFnBB", "effects"), new FFnBBCapabilityProvider<IBadgeEffects, EntityLivingBase>(BADGE_EFFECTS, (EntityLivingBase)event.getObject()));
         }
-        if (!(event.getObject() instanceof EntityPlayer)) return;
-        event.addCapability(new ResourceLocation("Minestuck", "PlayerData"), new MinestuckCapabilityProvider<IMinestuckPlayerData, EntityPlayer>(PLAYER_DATA, (EntityPlayer)event.getObject()));
+        if (event.getObject() instanceof EntityPlayer)
+        	event.addCapability(new ResourceLocation("Minestuck", "PlayerData"), new MinestuckCapabilityProvider<IMinestuckPlayerData, EntityPlayer>(PLAYER_DATA, (EntityPlayer)event.getObject()));
     }
 	
 	@SubscribeEvent

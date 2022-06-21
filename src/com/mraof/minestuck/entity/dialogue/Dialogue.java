@@ -7,11 +7,15 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mraof.minestuck.entity.consort.EntityConsort;
 import com.mraof.minestuck.entity.consort.EnumConsort;
 import com.mraof.minestuck.entity.dialogue.DialogueType.BasicDialogue;
+import com.mraof.minestuck.entity.dialogue.DialogueType.ExitDialogue;
+import com.mraof.minestuck.entity.dialogue.DialogueType.BackDialogue;
 import com.mraof.minestuck.entity.dialogue.IDialoguer.EnumDialoguer;
 import com.mraof.minestuck.util.Debug;
 import com.mraof.minestuck.entity.consort.EnumConsort.MerchantType;
@@ -28,13 +32,20 @@ import net.minecraft.util.text.ITextComponent;
 public class Dialogue 
 {
 	private static final Hashtable<String, DialogueContainer> dialogue = new Hashtable<>();
+	private static final Hashtable<String, ArrayList<String>> context = new Hashtable<>();
 	private static int idCounter = 0;
 	
 	public static void init()
 	{
 		//default
 		addMessage("backup").options("backup", "notAvailable");
-		addMessage("notAvailable").options("backup");
+		addMessage("notAvailable").addExit();
+		addMessage("generalStarter");
+		addMessage("test").context("bleh");
+		addMessage(new ExitDialogue("basicExit",new String[0]));
+		addMessage(new BackDialogue("goBack",new String[0]));
+		for(String key : dialogue.keySet())
+			dialogue.get(key).dialogueId = idCounter++;
 	}
 	
 	public static DialogueContainer addMessage(String message, String... args)
@@ -47,7 +58,6 @@ public class Dialogue
 		DialogueContainer msg = new DialogueContainer();
 		msg.dialogue = message;
 		dialogue.put(message.getString(), msg);
-		
 		return msg;
 	} 
 	
@@ -64,28 +74,47 @@ public class Dialogue
 		return set.toArray(new TitleLandAspect[set.size()]);
 	}
 	
-	public static DialogueContainer getDialogueFromString(String name)
+	public static DialogueContainer getDialogue(String name)
 	{
 		return dialogue.get(name);
 	}
 	
-	public static DialogueContainer getDialogueFromId(int id)
+	public static DialogueContainer getDialogue(int id)
 	{
-		return dialogue.get(dialogue.keySet().toArray()[id]);
+		return dialogue.get(convertId(id));
 	}
 	
-	public static String getRandomDialogue(IDialoguer talker, EntityPlayer player, String...except)
+	public static String convertId(int id)
+	{
+		return (String) dialogue.keySet().toArray()[id];
+	}
+	
+	public static int convertId(String stringID)
+	{
+		return dialogue.get(stringID).getDialogueId();
+	}
+	
+	public static int getRandomDialogue(IDialoguer talker, EntityPlayer player, ArrayList<Integer> except, @Nullable String...context)
 	{
 		LandAspectRegistry.AspectCombination aspects = MinestuckDimensionHandler.getAspects(talker.getHomeDimension());
 		
 		List<DialogueContainer> list = new ArrayList<>();
 		
-		for(String key : dialogue.keySet())
+		//makes a pool of dialogues to sift through instead of sifting through every dialogue; prob useful as we randomly pull
+		//more often and as we add more dialogues
+		ArrayList<String> pool = new ArrayList<String>(dialogue.keySet());
+		if(context != null)
+			for(String type : context)
+				if(Dialogue.context.containsKey(type))
+					pool.retainAll(Dialogue.context.get(type));
+		
+		for(String key : pool)
 		{
 			DialogueContainer message = dialogue.get(key);
+			//could replace this with contains() but it might not work so im gonna keep it like this 4 now
 			boolean alreadyGotten = false;
-			for(String exception : except)
-				if(key.contentEquals(exception))
+			for(int exception : except)
+				if(Dialogue.convertId(key) == exception)
 					alreadyGotten = true;
 			if(alreadyGotten)
 				continue;
@@ -108,14 +137,20 @@ public class Dialogue
 				continue;
 			list.add(message);
 		}
-		return WeightedRandom.getRandomItem(((Entity)talker).world.rand, list).getString();
+		if(list.isEmpty())
+			return -1;
+		return WeightedRandom.getRandomItem(((Entity)talker).world.rand, list).getDialogueId();
 	}
 	
-	public static ArrayList<String> getRandomDialogues(IDialoguer talker, EntityPlayer player, int amount)
+	public static ArrayList<Integer> getRandomDialogues(IDialoguer talker, EntityPlayer player, int amount, @Nullable String...context)
 	{
-		ArrayList<String> dialogues = new ArrayList<>();
+		ArrayList<Integer> dialogues = new ArrayList<>();
 		for(int i = 0; i < amount; i++)
-			dialogues.add(getRandomDialogue(talker, player, (String[]) dialogues.toArray()));
+		{
+			int newDialogue = getRandomDialogue(talker, player, dialogues, context);
+			if(newDialogue >= 0)
+				dialogues.add(newDialogue);
+		}
 		return dialogues;
 	}
 	
@@ -130,11 +165,13 @@ public class Dialogue
 		public DialogueContainer(int itemWeightIn) 
 		{
 			super(itemWeightIn);
-			dialogueId = idCounter++;
 		}
 		
 		private DialogueType dialogue;
-		private ArrayList<String> leadingDialogues;
+		private ArrayList<String> leadingDialogues = new ArrayList<String>()
+		{{
+			add("goBack");
+		}};
 		private int dialogueId;
 		
 		private boolean reqLand;
@@ -201,7 +238,19 @@ public class Dialogue
 		
 		public DialogueContainer options(String... options)
 		{
-			leadingDialogues = Lists.newArrayList(options);
+			leadingDialogues.addAll(Lists.newArrayList(options));
+			return this;
+		}
+		
+		public DialogueContainer removeBack()
+		{
+			leadingDialogues.remove("goBack");
+			return this;
+		}
+		
+		public DialogueContainer addExit()
+		{
+			leadingDialogues.add("basicExit");
 			return this;
 		}
 		
@@ -263,6 +312,17 @@ public class Dialogue
 		public int getDialogueId()
 		{
 			return dialogueId;
+		}
+		
+		public void context(String...context)
+		{
+			if(context != null)
+				for(String type : context)
+				{
+					if(!Dialogue.context.containsKey(type))
+						Dialogue.context.put(type, new ArrayList<String>());
+					Dialogue.context.get(type).add(this.getString());
+				}
 		}
 	}
 	

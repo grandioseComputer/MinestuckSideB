@@ -7,6 +7,8 @@ import java.util.HashMap;
 import javax.annotation.Nullable;
 
 import com.mraof.minestuck.capabilities.MinestuckCapabilities;
+import com.mraof.minestuck.capabilities.MinestuckPlayerData;
+import com.mraof.minestuck.capabilities.api.IMinestuckPlayerData;
 import com.mraof.minestuck.client.gui.components.GuiScrollable;
 import com.mraof.minestuck.entity.consort.EntityConsort;
 import com.mraof.minestuck.entity.dialogue.Dialogue;
@@ -55,17 +57,14 @@ public class GuiDialogue extends GuiScreen
 	
 	public GuiDialogue ()
 	{
-		int[] knowledge = mc.player.getCapability(MinestuckCapabilities.PLAYER_DATA, null).getTalkerKnowledge();
-		if(knowledge.length <= 0)
-			updateMessage("backup");
-		else
-			updateMessage(null);
+		//int[] knowledge = mc.player.getCapability(MinestuckCapabilities.PLAYER_DATA, null).getTalkerKnowledge();
+		updateMessage(null);
 	}
-	
+	//bleh this fucks stuff up cause it tries to update the message first before making the talker
 	public GuiDialogue (IDialoguer talker)
 	{
-		this();
 		this.talker = talker;
+		updateMessage(null);
 	}
 	
 	@Override
@@ -132,11 +131,12 @@ public class GuiDialogue extends GuiScreen
 		{
 			
 			previousOptions.clear();
-			updateResponse(Dialogue.getDialogueFromString("generalStarter"));
+			updateResponse(Dialogue.getDialogue("generalStarter"));
 			ArrayList<String> options = new ArrayList<String>() 
 			{{
-				for(int id : mc.player.getCapability(MinestuckCapabilities.PLAYER_DATA, null).getTalkerKnowledge())
-					add(Dialogue.getDialogueFromId(id).getString());
+				int[] knowledge = Minecraft.getMinecraft().player.getCapability(MinestuckCapabilities.PLAYER_DATA, null).getTalkerKnowledge();
+				for(int id : knowledge)
+					add(Dialogue.getDialogue(id).getString());
 			}};
 			updateOptions(options);
 			return;
@@ -147,7 +147,7 @@ public class GuiDialogue extends GuiScreen
 			for(int i = previousOptions.indexOf(dialogueName) + 1; i < previousOptions.size(); i++)
 				previousOptions.remove(i);
 		
-		DialogueContainer dialogue = Dialogue.getDialogueFromString(dialogueName);
+		DialogueContainer dialogue = Dialogue.getDialogue(dialogueName);
 		
 		updateResponse(dialogue);
 		
@@ -171,7 +171,7 @@ public class GuiDialogue extends GuiScreen
 		for(String option : options)
 		{
 			int optionStarts = storedOptions.size();
-			storedOptions.addAll(Compute.splitMessage(Dialogue.getDialogueFromString(option).getConsoleMessage(talker, Minecraft.getMinecraft().player).getFormattedText(), 227));
+			storedOptions.addAll(Compute.splitMessage(Dialogue.getDialogue(option).getConsoleMessage(talker, Minecraft.getMinecraft().player).getFormattedText(), 227));
 			int[] temp = new int[storedOptions.size()];
 			for(int i = 0; i < temp.length; i++)
 			{
@@ -215,16 +215,18 @@ public class GuiDialogue extends GuiScreen
 			if(clicked == -1) continue;
 			DialogueContainer dialogue = null;
 			if(previousOptions.size() > 0)
-				dialogue = Dialogue.getDialogueFromString(Dialogue.getDialogueFromString(previousOptions.get(previousOptions.size()-1)).getOptions().get(clicked));
+				dialogue = Dialogue.getDialogue(Dialogue.getDialogue(previousOptions.get(previousOptions.size()-1)).getOptions().get(clicked));
 			else
 			{
 				int[] knowledge = mc.player.getCapability(MinestuckCapabilities.PLAYER_DATA, null).getTalkerKnowledge();
-				//dialogue = 
+				dialogue = Dialogue.getDialogue(knowledge[clicked]); 
 			}
 			if(dialogue.getDialogue() instanceof ExitDialogue)
 				this.mc.setIngameFocus();
 			else if(dialogue.getDialogue() instanceof BackDialogue)
 				updateMessage(previousOptions.size() > 1 ? previousOptions.get(previousOptions.size() - 2) : null);
+			else if(dialogue.getString().contains("backup"))
+				updateMessage(null);
 			else
 				updateMessage(dialogue.getString());
 		}
@@ -267,6 +269,12 @@ public class GuiDialogue extends GuiScreen
 	{
 		return false;
 	}
+	
+	@Override
+	public void onGuiClosed()
+    {
+		mc.player.getCapability(MinestuckCapabilities.PLAYER_DATA, null).setTalkerKnowledge(null);
+    }
 	
 	@Override
 	protected void keyTyped(char typedChar, int keyCode) throws IOException

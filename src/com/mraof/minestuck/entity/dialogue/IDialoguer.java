@@ -14,7 +14,7 @@ import net.minecraft.util.text.TextFormatting;
 public interface IDialoguer 
 {
 	
-	public ArrayList<String> getDialogue();
+	public ArrayList<Integer> getDialogue();
 	
 	public int getHomeDimension();
 

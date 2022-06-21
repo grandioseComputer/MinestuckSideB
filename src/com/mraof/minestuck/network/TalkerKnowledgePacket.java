@@ -16,8 +16,11 @@ public class TalkerKnowledgePacket extends MinestuckPacket
 	
 	@Override
 	public MinestuckPacket generatePacket(Object... data) {
-		this.data.writeInt(data.length);
-		for(Object dialogue : data)
+		if(data == null || data.length <= 0 || data[0] == null || !(data[0] instanceof ArrayList) || ((ArrayList<Integer>)data[0]).size() <= 0 || !(((ArrayList<Integer>)data[0]).get(0) instanceof Integer)) 
+			return this;
+		
+		this.data.writeInt(((ArrayList<Integer>)data[0]).size());
+		for(int dialogue : ((ArrayList<Integer>)data[0]))
 		{
 			this.data.writeInt((int) dialogue);
 		}

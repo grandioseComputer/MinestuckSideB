@@ -602,7 +602,7 @@ store.tile.cactus.tooltip=It's the quenchiest!
 #Dialogue: Consort
 
 dialogue.talker.backup=NakNakNak
-dialogue.player.backup=null
+dialogue.player.backup=Hello?
 dialogue.console.backup==>
 
 dialogue.talker.notAvailable=I don't have any dialogue right now............................................................................................................................................................................................................................................................
@@ -612,6 +612,18 @@ dialogue.console.notAvailable=Queryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
 dialogue.talker.generalStarter=Hello there! What do you want to talk about?
 dialogue.player.generalStarter=Hello
 dialogue.console.generalStarter=Greet
+
+dialogue.talker.goBack=null
+dialogue.player.goBack=Can we go back?
+dialogue.console.goBack=Go back
+
+dialogue.talker.basicExit=null
+dialogue.player.basicExit=See ya!
+dialogue.console.basicExit=Leave
+
+dialogue.talker.test=woop
+dialogue.player.test=hello?
+dialogue.console.test=Does it work?
 
 #Denizen Names
 denizen.blood.name=Jormungandr
